@@ -3,7 +3,10 @@ CLI entrypoint for Elon Rotation Bot.
 Handles indicator loading, allocation, gating, email composition, logging, and flags.
 """
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
+# ...
+now = datetime.now(timezone.utc)
+
 from indicators.loader import load_indicators
 from rotation.allocator import allocate
 # ...existing code...
