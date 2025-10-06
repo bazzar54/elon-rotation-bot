@@ -1,11 +1,9 @@
-***REMOVED***
-***REMOVED***
 
 ***REMOVED***
 regex:SG\.[A-Za-z0-9_-]+==>SG.REDACTED
 
 ***REMOVED***
-regex:***REMOVED***
+regex:SENDGRID_API_KEY=
 
 ***REMOVED***
 regex:Authorization: Bearer [A-Za-z0-9_\-\.]+==>Authorization: Bearer REDACTED
