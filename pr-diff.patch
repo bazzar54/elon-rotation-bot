@@ -1,0 +1,1468 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+new file mode 100644
+index 0000000..be822ea
+--- /dev/null
++++ b/.github/workflows/ci.yml
+@@ -0,0 +1,25 @@
++name: CI
++on:
++  push:
++    branches: [ main ]
++  pull_request:
++    branches: [ main ]
++jobs:
++  build:
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v3
++      - name: Set up Python 3.11
++        uses: actions/setup-python@v4
++        with:
++          python-version: '3.11'
++      - name: Install dependencies
++        run: |
++          python -m pip install --upgrade pip
++          pip install -r requirements.txt
++      - name: Lint with ruff
++        run: ruff .
++      - name: Format with black
++        run: black --check .
++      - name: Run tests
++        run: pytest
+diff --git a/PR_DESCRIPTION.md b/PR_DESCRIPTION.md
+new file mode 100644
+index 0000000..9da4dad
+--- /dev/null
++++ b/PR_DESCRIPTION.md
+@@ -0,0 +1,52 @@
++Repository file tree:
++
++100644 949169fa4b29a7d4d3bc5ee7399c7e0cb073346a 0	.env.example
++100644 be822eafae3ee755c913dee9f9e5a6b271156a05 0	.github/workflows/ci.yml
++100644 f139d86a81d33e340956c31d038d22236f22b7e5 0	.gitignore
++100644 87d17f0f1a636c4f8113da76a2e56d576f673774 0	PR_DESCRIPTION.md
++100644 917641a5b490cb591c45b7136b09e6587f1569aa 0	README.md
++100644 61e60b10a063f88fe7c37aabc251f4a4f8887531 0	elon_mailer_sendgrid.py
++100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	indicators/__init__.py
++100644 ab9848115604c7cb41d547b895f418a5b262f9d2 0	indicators/loader.py
++100644 6c6a2b9fad290ba863df636ac94428284e1471d9 0	logs/run-2025-10-06.txt
++100644 e174681288575c09ea78d83b76663207962ff879 0	main.py
++100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	notify/__init__.py
++100644 144870444e0992ba85ae0b1e5a63cb84352adad0 0	notify/emailer.py
++100644 1d67088d10c6a9f449109d669f20b5f4512d330f 0	pr-diff.patch
++100644 a635c5c031823148db0da62e63edb0c1f6e4a5f6 0	pytest.ini
++100644 cb44d5eb8030b5a4a9c5e303917a42c6c86108c3 0	requirements.txt
++100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	rotation/__init__.py
++100644 2ad5fdf9e9bdc3ec78ff0a2d1453af5b38656465 0	rotation/allocator.py
++100644 66f818e0900c12a8773e750f2415d5f75f728e8a 0	runner.sh
++100644 6d440f5ae36eeabe62660efa7b371e270d73a118 0	sample.json
++100644 d5bbf1f068cb7e3e7a9add624b9e95aa586f8f32 0	sample2.json
++100644 2c7046de169a233a74f301f9ec0ca49dc2968ab7 0	signals/gating.py
++100644 29f843754b48e2201d062a87b392d43aa6104d66 0	state/last_sent.json
++100644 e94aeff2282d78050247e815f66e3908d7fb7f9a 0	tests/test_allocator.py
++100644 41ad06ae7e9107392e37ebfa42ee1a8c723dec7c 0	tests/test_emailer.py
++100644 d357500f1d03fbd94a5b34edd2e9563b7522646b 0	tests/test_gating.py
++100644 f32d97fcd2a673334ec3762657b4652c7dc71fc7 0	tree.txt
++
++
++Name-status diff (main..pr/elon-rotation-bot):
++
++A	.github/workflows/ci.yml
++A	PR_DESCRIPTION.md
++A	indicators/loader.py
++A	logs/run-2025-10-06.txt
++M	main.py
++A	notify/emailer.py
++A	pr-diff.patch
++A	requirements.txt
++A	runner.sh
++A	sample.json
++A	sample2.json
++A	signals/gating.py
++A	state/last_sent.json
++A	tests/test_allocator.py
++A	tests/test_emailer.py
++A	tests/test_gating.py
++A	tree.txt
++
++
++Full unified diff is saved in pr-diff.patch
+diff --git a/indicators/loader.py b/indicators/loader.py
+new file mode 100644
+index 0000000..ab98481
+--- /dev/null
++++ b/indicators/loader.py
+@@ -0,0 +1,25 @@
++"""
++Indicators loader for Elon Rotation Bot.
++Implements load_indicators(now_utc) -> dict.
++"""
++from datetime import datetime
++
++def load_indicators(now_utc: datetime) -> dict:
++    """Fetch and return all required indicators as a dict.
++    Args:
++        now_utc (datetime): Current UTC datetime.
++    Returns:
++        dict: Indicator values.
++    """
++    # TODO: Implement indicator fetching
++    return {
++        "btc_dom": 55.0,
++        "eth_dom": 18.0,
++        "fear_greed": 40,
++        "cbbi": 65,
++        "trend_btc": "flat",
++        "trend_eth": "up",
++        "pi_cycle_flag": False,
++        "gtrends_coinbase": 50,
++        "btc_dom_delta_7d": 1.2,
++    }
+diff --git a/logs/run-2025-10-06.txt b/logs/run-2025-10-06.txt
+new file mode 100644
+index 0000000..6c6a2b9
+--- /dev/null
++++ b/logs/run-2025-10-06.txt
+@@ -0,0 +1,2 @@
++2025-10-06T12:51:22.044131+00:00 dry-run: saved_indicators=True charts=/tmp/elon_before_1759755080.png,/tmp/elon_after_1759755080.png
++2025-10-06T12:54:55.090049+00:00 dry-run: send=True reason=initial saved_indicators=True charts=/tmp/elon_before_1759755294.png,/tmp/elon_after_1759755294.png
+diff --git a/main.py b/main.py
+index 9c5c7ae..e174681 100644
+--- a/main.py
++++ b/main.py
+@@ -1,27 +1,161 @@
+ """
+ CLI entrypoint for Elon Rotation Bot.
+-Handles indicator loading, allocation, gating, email composition, logging, and flags.
++Implements a minimal runner used for dry-runs: loads indicators, allocates,
++optionally saves indicators, writes before/after pie charts to /tmp, and logs the run.
+ """
++from __future__ import annotations
++
+ import argparse
++import json
++import os
+ from datetime import datetime, timezone
+-# ...
+-now = datetime.now(timezone.utc)
++from pathlib import Path
++from zoneinfo import ZoneInfo
++from typing import Dict
++
++import matplotlib.pyplot as plt
+ 
+ from indicators.loader import load_indicators
+ from rotation.allocator import allocate
+-# ...existing code...
++from signals.gating import should_send
++
++
++STATE_DIR = Path("state")
++LOGS_DIR = Path("logs")
++STATE_FILE = STATE_DIR / "last_sent.json"
++
++
++def read_last_sent() -> Dict[str, float] | None:
++    if not STATE_FILE.exists():
++        return None
++    try:
++        return json.loads(STATE_FILE.read_text())
++    except Exception:
++        return None
++
++
++def write_last_sent(w: Dict[str, float]) -> None:
++    STATE_DIR.mkdir(parents=True, exist_ok=True)
++    STATE_FILE.write_text(json.dumps(w, indent=2, default=str))
++
++
++def save_indicators(path: str, indicators: dict) -> None:
++    p = Path(path)
++    p.write_text(json.dumps(indicators, indent=2, default=str))
++
++
++def pie_chart(weights: Dict[str, float], title: str, path: str) -> None:
++    labels = list(weights.keys())
++    vals = [weights[k] for k in labels]
++    # Matplotlib expects sums in 1.0 or 100; use percentages
++    pct = [v * 100 for v in vals]
++    fig, ax = plt.subplots(figsize=(4, 4))
++    ax.pie(pct, labels=labels, autopct="%1.0f%%", startangle=140)
++    ax.set_title(title)
++    fig.savefig(path, bbox_inches="tight")
++    plt.close(fig)
++
++
++def printable_change(before: Dict[str, float], after: Dict[str, float]) -> str:
++    parts = []
++    for k in ["BTC", "ETH", "ALTS"]:
++        b = before.get(k, 0.0)
++        a = after.get(k, 0.0)
++        diff = round((a - b) * 100, 0)
++        sign = "+" if diff >= 0 else ""
++        parts.append(f"{sign}{int(diff)}% {k}")
++    return ", ".join(parts)
++
+ 
+-def main():
++def log_run(msg: str) -> None:
++    LOGS_DIR.mkdir(parents=True, exist_ok=True)
++    fn = LOGS_DIR / f"run-{datetime.now(timezone.utc).date().isoformat()}.txt"
++    with fn.open("a") as fh:
++        fh.write(f"{datetime.now(timezone.utc).isoformat()} {msg}\n")
++
++
++def main() -> None:
+     parser = argparse.ArgumentParser(description="Elon Rotation Bot")
+     parser.add_argument("--dry-run", action="store_true", help="No email sent")
+     parser.add_argument("--force", action="store_true", help="Bypass gating")
+     parser.add_argument("--save-indicators", type=str, help="Save indicators to path.json")
+     args = parser.parse_args()
+ 
+-    now = datetime.utcnow()
+-    indicators = load_indicators(now)
++    now_utc = datetime.now(timezone.utc)
++    indicators = load_indicators(now_utc)
+     target = allocate(indicators)
+-    # TODO: Implement gating, email, logging
++
++    # last sent (structured: {"weights":..., "indicators":..., "sent_at": iso})
++    raw = read_last_sent()
++    prev_weights = None
++    prev_indicators = None
++    last_sent_at = None
++    if raw:
++        prev_weights = raw.get("weights")
++        prev_indicators = raw.get("indicators")
++        sent_at = raw.get("sent_at")
++        try:
++            last_sent_at = datetime.fromisoformat(sent_at) if sent_at else None
++        except Exception:
++            last_sent_at = None
++    if prev_weights is None:
++        prev_weights = target.copy()
++
++    # Save indicators if requested
++    if args.save_indicators:
++        save_indicators(args.save_indicators, {"generated_at": now_utc.isoformat(), **indicators})
++
++    # Generate pie charts in /tmp
++    before_path = f"/tmp/elon_before_{int(now_utc.timestamp())}.png"
++    after_path = f"/tmp/elon_after_{int(now_utc.timestamp())}.png"
++    try:
++        pie_chart(prev_weights, "Before", before_path)
++        pie_chart(target, "After", after_path)
++    except Exception as exc:
++        print("Failed to generate charts:", exc)
++
++    # Decide whether to send
++    send, reason = should_send(target, prev_weights, indicators, prev_indicators, last_sent_at, now_utc, force=args.force)
++
++    # Print concise summary
++    london = now_utc.astimezone(ZoneInfo("Europe/London"))
++    title = f"Elon Rotation Update — {london.strftime('%Y-%m-%d %H:%M UK')}"
++    print(title)
++    # short rationale bullets (simple derivation)
++    rationale = []
++    btc_dom = indicators.get("btc_dom")
++    fg = indicators.get("fear_greed")
++    cbbi = indicators.get("cbbi")
++    if btc_dom is not None and fg is not None:
++        rationale.append(f"BTC.D {btc_dom}%; Fear&Greed at {fg}.")
++    if indicators.get("pi_cycle_flag"):
++        rationale.append("Pi-Cycle flag set.")
++    if indicators.get("trend_eth"):
++        rationale.append(f"ETH trend: {indicators.get('trend_eth')}")
++
++    for r in rationale[:4]:
++        print("-", r)
++
++    print("\nBefore -> After:")
++    for k in ["BTC", "ETH", "ALTS"]:
++        b = prev_weights.get(k, 0.0)
++        a = target.get(k, 0.0)
++        print(f"{k}: {b:.2f} -> {a:.2f}")
++
++    print("\nActions:", printable_change(prev_weights, target))
++    print("Charts:", before_path, after_path)
++
++    print("Gating:", send, reason)
++
++    # If we're sending (or simulating on dry-run), update last_sent state
++    if send:
++        # Simulate send during dry-run; in real run we'd call emailer
++        new_state = {"weights": target, "indicators": indicators, "sent_at": now_utc.isoformat()}
++        write_last_sent(new_state)
++
++    # Log run
++    log_run(f"dry-run: send={send} reason={reason} saved_indicators={bool(args.save_indicators)} charts={before_path},{after_path}")
++
+ 
+ if __name__ == "__main__":
+     main()
+diff --git a/notify/emailer.py b/notify/emailer.py
+new file mode 100644
+index 0000000..1448704
+--- /dev/null
++++ b/notify/emailer.py
+@@ -0,0 +1,135 @@
++"""Email composer for Elon Rotation Bot.
++Builds small HTML rotation updates and optionally sends them via SMTP.
++
++This module provides two functions:
++- compose_email(before, after, indicators, portfolio=None) -> (subject, html, [attachments])
++- send_email(subject, html, attachments, to_address, smtp_from=None)
++
++Attachments are generated as PNG pie charts in /tmp.
++"""
++
++from datetime import datetime, timezone
++import os
++import smtplib
++from email.message import EmailMessage
++from pathlib import Path
++from typing import Dict, List, Optional, Tuple
++
++import matplotlib.pyplot as plt
++from dotenv import load_dotenv
++
++
++load_dotenv()
++
++
++def _make_pie(weights: Dict[str, float], title: str, path: str) -> None:
++    labels = list(weights.keys())
++    vals = [weights.get(k, 0.0) for k in labels]
++    pct = [v * 100 for v in vals]
++    fig, ax = plt.subplots(figsize=(4, 4))
++    ax.pie(pct, labels=labels, autopct="%1.0f%%", startangle=140)
++    ax.set_title(title)
++    Path(path).parent.mkdir(parents=True, exist_ok=True)
++    fig.savefig(path, bbox_inches="tight")
++    plt.close(fig)
++
++
++def compose_email(
++    before: Dict[str, float],
++    after: Dict[str, float],
++    indicators: Dict,
++    portfolio: Optional[Dict] = None,
++) -> Tuple[str, str, List[str]]:
++    """Compose a short HTML email and generate two pie-chart attachments.
++
++    Returns (subject, html_body, [attachment_paths]).
++    """
++    now = datetime.now(timezone.utc)
++    subject = f"Elon Rotation Update — {now.strftime('%Y-%m-%d %H:%M UTC')}"
++
++    bullets: List[str] = []
++    if indicators.get("btc_dom") is not None and indicators.get("fear_greed") is not None:
++        bullets.append(f"BTC.D {indicators.get('btc_dom')} pp; Fear&Greed at {indicators.get('fear_greed')}")
++    if indicators.get("cbbi") is not None:
++        bullets.append(f"CBBI {indicators.get('cbbi')}")
++    if indicators.get("pi_cycle_flag"):
++        bullets.append("Pi-Cycle flagged")
++
++    table_rows = """
++<tr><th>Asset</th><th>Before</th><th>After</th></tr>
++"""
++    for k in ["BTC", "ETH", "ALTS"]:
++        b = before.get(k, 0.0)
++        a = after.get(k, 0.0)
++        table_rows += f"<tr><td>{k}</td><td>{b:.0%}</td><td>{a:.0%}</td></tr>\n"
++
++    actions = []
++    for k in ["BTC", "ETH", "ALTS"]:
++        diff = round((after.get(k, 0.0) - before.get(k, 0.0)) * 100)
++        sign = "+" if diff >= 0 else ""
++        actions.append(f"{sign}{diff}% {k}")
++
++    html = f"""
++<html>
++<body>
++  <h2>{subject}</h2>
++  <ul>
++    {''.join(f'<li>{b}</li>' for b in bullets)}
++  </ul>
++  <table border="1" cellpadding="4" cellspacing="0">
++    {table_rows}
++  </table>
++  <p><strong>Actions:</strong> {', '.join(actions)}</p>
++</body>
++</html>
++"""
++
++    ts = int(now.timestamp())
++    before_path = f"/tmp/elon_email_before_{ts}.png"
++    after_path = f"/tmp/elon_email_after_{ts}.png"
++    _make_pie(before, "Before", before_path)
++    _make_pie(after, "After", after_path)
++
++    return subject, html, [before_path, after_path]
++
++
++def send_email(
++    subject: str,
++    html_body: str,
++    attachments: List[str],
++    to_address: str,
++    smtp_from: Optional[str] = None,
++) -> None:
++    """Send an HTML email with attachments using SMTP credentials from environment.
++
++    Required env vars: SMTP_HOST, SMTP_USER, SMTP_PASS, SMTP_FROM (unless smtp_from provided).
++    Optional: SMTP_PORT (default 587).
++    """
++    smtp_host = os.getenv("SMTP_HOST")
++    smtp_port = int(os.getenv("SMTP_PORT", "587"))
++    smtp_user = os.getenv("SMTP_USER")
++    smtp_pass = os.getenv("SMTP_PASS")
++    smtp_from = smtp_from or os.getenv("SMTP_FROM")
++
++    if not smtp_host or not smtp_user or not smtp_pass or not smtp_from:
++        raise RuntimeError("SMTP credentials are not fully configured in environment")
++
++    msg = EmailMessage()
++    msg["Subject"] = subject
++    msg["From"] = smtp_from
++    msg["To"] = to_address
++    msg.set_content("This is an HTML email. Please view in an HTML-capable client.")
++    msg.add_alternative(html_body, subtype="html")
++
++    for path in attachments:
++        with open(path, "rb") as f:
++            data = f.read()
++        msg.add_attachment(data, maintype="image", subtype="png", filename=Path(path).name)
++
++    with smtplib.SMTP(smtp_host, smtp_port, timeout=30) as s:
++        s.starttls()
++        s.login(smtp_user, smtp_pass)
++        s.send_message(msg)
++
++
++__all__ = ["compose_email", "send_email"]
+diff --git a/pr-diff.patch b/pr-diff.patch
+new file mode 100644
+index 0000000..1d67088
+--- /dev/null
++++ b/pr-diff.patch
+@@ -0,0 +1,686 @@
++diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
++new file mode 100644
++index 0000000..be822ea
++--- /dev/null
+++++ b/.github/workflows/ci.yml
++@@ -0,0 +1,25 @@
+++name: CI
+++on:
+++  push:
+++    branches: [ main ]
+++  pull_request:
+++    branches: [ main ]
+++jobs:
+++  build:
+++    runs-on: ubuntu-latest
+++    steps:
+++      - uses: actions/checkout@v3
+++      - name: Set up Python 3.11
+++        uses: actions/setup-python@v4
+++        with:
+++          python-version: '3.11'
+++      - name: Install dependencies
+++        run: |
+++          python -m pip install --upgrade pip
+++          pip install -r requirements.txt
+++      - name: Lint with ruff
+++        run: ruff .
+++      - name: Format with black
+++        run: black --check .
+++      - name: Run tests
+++        run: pytest
++diff --git a/indicators/loader.py b/indicators/loader.py
++new file mode 100644
++index 0000000..ab98481
++--- /dev/null
+++++ b/indicators/loader.py
++@@ -0,0 +1,25 @@
+++"""
+++Indicators loader for Elon Rotation Bot.
+++Implements load_indicators(now_utc) -> dict.
+++"""
+++from datetime import datetime
+++
+++def load_indicators(now_utc: datetime) -> dict:
+++    """Fetch and return all required indicators as a dict.
+++    Args:
+++        now_utc (datetime): Current UTC datetime.
+++    Returns:
+++        dict: Indicator values.
+++    """
+++    # TODO: Implement indicator fetching
+++    return {
+++        "btc_dom": 55.0,
+++        "eth_dom": 18.0,
+++        "fear_greed": 40,
+++        "cbbi": 65,
+++        "trend_btc": "flat",
+++        "trend_eth": "up",
+++        "pi_cycle_flag": False,
+++        "gtrends_coinbase": 50,
+++        "btc_dom_delta_7d": 1.2,
+++    }
++diff --git a/logs/run-2025-10-06.txt b/logs/run-2025-10-06.txt
++new file mode 100644
++index 0000000..6c6a2b9
++--- /dev/null
+++++ b/logs/run-2025-10-06.txt
++@@ -0,0 +1,2 @@
+++2025-10-06T12:51:22.044131+00:00 dry-run: saved_indicators=True charts=/tmp/elon_before_1759755080.png,/tmp/elon_after_1759755080.png
+++2025-10-06T12:54:55.090049+00:00 dry-run: send=True reason=initial saved_indicators=True charts=/tmp/elon_before_1759755294.png,/tmp/elon_after_1759755294.png
++diff --git a/main.py b/main.py
++index 9c5c7ae..e174681 100644
++--- a/main.py
+++++ b/main.py
++@@ -1,27 +1,161 @@
++ """
++ CLI entrypoint for Elon Rotation Bot.
++-Handles indicator loading, allocation, gating, email composition, logging, and flags.
+++Implements a minimal runner used for dry-runs: loads indicators, allocates,
+++optionally saves indicators, writes before/after pie charts to /tmp, and logs the run.
++ """
+++from __future__ import annotations
+++
++ import argparse
+++import json
+++import os
++ from datetime import datetime, timezone
++-# ...
++-now = datetime.now(timezone.utc)
+++from pathlib import Path
+++from zoneinfo import ZoneInfo
+++from typing import Dict
+++
+++import matplotlib.pyplot as plt
++ 
++ from indicators.loader import load_indicators
++ from rotation.allocator import allocate
++-# ...existing code...
+++from signals.gating import should_send
+++
+++
+++STATE_DIR = Path("state")
+++LOGS_DIR = Path("logs")
+++STATE_FILE = STATE_DIR / "last_sent.json"
+++
+++
+++def read_last_sent() -> Dict[str, float] | None:
+++    if not STATE_FILE.exists():
+++        return None
+++    try:
+++        return json.loads(STATE_FILE.read_text())
+++    except Exception:
+++        return None
+++
+++
+++def write_last_sent(w: Dict[str, float]) -> None:
+++    STATE_DIR.mkdir(parents=True, exist_ok=True)
+++    STATE_FILE.write_text(json.dumps(w, indent=2, default=str))
+++
+++
+++def save_indicators(path: str, indicators: dict) -> None:
+++    p = Path(path)
+++    p.write_text(json.dumps(indicators, indent=2, default=str))
+++
+++
+++def pie_chart(weights: Dict[str, float], title: str, path: str) -> None:
+++    labels = list(weights.keys())
+++    vals = [weights[k] for k in labels]
+++    # Matplotlib expects sums in 1.0 or 100; use percentages
+++    pct = [v * 100 for v in vals]
+++    fig, ax = plt.subplots(figsize=(4, 4))
+++    ax.pie(pct, labels=labels, autopct="%1.0f%%", startangle=140)
+++    ax.set_title(title)
+++    fig.savefig(path, bbox_inches="tight")
+++    plt.close(fig)
+++
+++
+++def printable_change(before: Dict[str, float], after: Dict[str, float]) -> str:
+++    parts = []
+++    for k in ["BTC", "ETH", "ALTS"]:
+++        b = before.get(k, 0.0)
+++        a = after.get(k, 0.0)
+++        diff = round((a - b) * 100, 0)
+++        sign = "+" if diff >= 0 else ""
+++        parts.append(f"{sign}{int(diff)}% {k}")
+++    return ", ".join(parts)
+++
++ 
++-def main():
+++def log_run(msg: str) -> None:
+++    LOGS_DIR.mkdir(parents=True, exist_ok=True)
+++    fn = LOGS_DIR / f"run-{datetime.now(timezone.utc).date().isoformat()}.txt"
+++    with fn.open("a") as fh:
+++        fh.write(f"{datetime.now(timezone.utc).isoformat()} {msg}\n")
+++
+++
+++def main() -> None:
++     parser = argparse.ArgumentParser(description="Elon Rotation Bot")
++     parser.add_argument("--dry-run", action="store_true", help="No email sent")
++     parser.add_argument("--force", action="store_true", help="Bypass gating")
++     parser.add_argument("--save-indicators", type=str, help="Save indicators to path.json")
++     args = parser.parse_args()
++ 
++-    now = datetime.utcnow()
++-    indicators = load_indicators(now)
+++    now_utc = datetime.now(timezone.utc)
+++    indicators = load_indicators(now_utc)
++     target = allocate(indicators)
++-    # TODO: Implement gating, email, logging
+++
+++    # last sent (structured: {"weights":..., "indicators":..., "sent_at": iso})
+++    raw = read_last_sent()
+++    prev_weights = None
+++    prev_indicators = None
+++    last_sent_at = None
+++    if raw:
+++        prev_weights = raw.get("weights")
+++        prev_indicators = raw.get("indicators")
+++        sent_at = raw.get("sent_at")
+++        try:
+++            last_sent_at = datetime.fromisoformat(sent_at) if sent_at else None
+++        except Exception:
+++            last_sent_at = None
+++    if prev_weights is None:
+++        prev_weights = target.copy()
+++
+++    # Save indicators if requested
+++    if args.save_indicators:
+++        save_indicators(args.save_indicators, {"generated_at": now_utc.isoformat(), **indicators})
+++
+++    # Generate pie charts in /tmp
+++    before_path = f"/tmp/elon_before_{int(now_utc.timestamp())}.png"
+++    after_path = f"/tmp/elon_after_{int(now_utc.timestamp())}.png"
+++    try:
+++        pie_chart(prev_weights, "Before", before_path)
+++        pie_chart(target, "After", after_path)
+++    except Exception as exc:
+++        print("Failed to generate charts:", exc)
+++
+++    # Decide whether to send
+++    send, reason = should_send(target, prev_weights, indicators, prev_indicators, last_sent_at, now_utc, force=args.force)
+++
+++    # Print concise summary
+++    london = now_utc.astimezone(ZoneInfo("Europe/London"))
+++    title = f"Elon Rotation Update — {london.strftime('%Y-%m-%d %H:%M UK')}"
+++    print(title)
+++    # short rationale bullets (simple derivation)
+++    rationale = []
+++    btc_dom = indicators.get("btc_dom")
+++    fg = indicators.get("fear_greed")
+++    cbbi = indicators.get("cbbi")
+++    if btc_dom is not None and fg is not None:
+++        rationale.append(f"BTC.D {btc_dom}%; Fear&Greed at {fg}.")
+++    if indicators.get("pi_cycle_flag"):
+++        rationale.append("Pi-Cycle flag set.")
+++    if indicators.get("trend_eth"):
+++        rationale.append(f"ETH trend: {indicators.get('trend_eth')}")
+++
+++    for r in rationale[:4]:
+++        print("-", r)
+++
+++    print("\nBefore -> After:")
+++    for k in ["BTC", "ETH", "ALTS"]:
+++        b = prev_weights.get(k, 0.0)
+++        a = target.get(k, 0.0)
+++        print(f"{k}: {b:.2f} -> {a:.2f}")
+++
+++    print("\nActions:", printable_change(prev_weights, target))
+++    print("Charts:", before_path, after_path)
+++
+++    print("Gating:", send, reason)
+++
+++    # If we're sending (or simulating on dry-run), update last_sent state
+++    if send:
+++        # Simulate send during dry-run; in real run we'd call emailer
+++        new_state = {"weights": target, "indicators": indicators, "sent_at": now_utc.isoformat()}
+++        write_last_sent(new_state)
+++
+++    # Log run
+++    log_run(f"dry-run: send={send} reason={reason} saved_indicators={bool(args.save_indicators)} charts={before_path},{after_path}")
+++
++ 
++ if __name__ == "__main__":
++     main()
++diff --git a/notify/emailer.py b/notify/emailer.py
++new file mode 100644
++index 0000000..1448704
++--- /dev/null
+++++ b/notify/emailer.py
++@@ -0,0 +1,135 @@
+++"""Email composer for Elon Rotation Bot.
+++Builds small HTML rotation updates and optionally sends them via SMTP.
+++
+++This module provides two functions:
+++- compose_email(before, after, indicators, portfolio=None) -> (subject, html, [attachments])
+++- send_email(subject, html, attachments, to_address, smtp_from=None)
+++
+++Attachments are generated as PNG pie charts in /tmp.
+++"""
+++
+++from datetime import datetime, timezone
+++import os
+++import smtplib
+++from email.message import EmailMessage
+++from pathlib import Path
+++from typing import Dict, List, Optional, Tuple
+++
+++import matplotlib.pyplot as plt
+++from dotenv import load_dotenv
+++
+++
+++load_dotenv()
+++
+++
+++def _make_pie(weights: Dict[str, float], title: str, path: str) -> None:
+++    labels = list(weights.keys())
+++    vals = [weights.get(k, 0.0) for k in labels]
+++    pct = [v * 100 for v in vals]
+++    fig, ax = plt.subplots(figsize=(4, 4))
+++    ax.pie(pct, labels=labels, autopct="%1.0f%%", startangle=140)
+++    ax.set_title(title)
+++    Path(path).parent.mkdir(parents=True, exist_ok=True)
+++    fig.savefig(path, bbox_inches="tight")
+++    plt.close(fig)
+++
+++
+++def compose_email(
+++    before: Dict[str, float],
+++    after: Dict[str, float],
+++    indicators: Dict,
+++    portfolio: Optional[Dict] = None,
+++) -> Tuple[str, str, List[str]]:
+++    """Compose a short HTML email and generate two pie-chart attachments.
+++
+++    Returns (subject, html_body, [attachment_paths]).
+++    """
+++    now = datetime.now(timezone.utc)
+++    subject = f"Elon Rotation Update — {now.strftime('%Y-%m-%d %H:%M UTC')}"
+++
+++    bullets: List[str] = []
+++    if indicators.get("btc_dom") is not None and indicators.get("fear_greed") is not None:
+++        bullets.append(f"BTC.D {indicators.get('btc_dom')} pp; Fear&Greed at {indicators.get('fear_greed')}")
+++    if indicators.get("cbbi") is not None:
+++        bullets.append(f"CBBI {indicators.get('cbbi')}")
+++    if indicators.get("pi_cycle_flag"):
+++        bullets.append("Pi-Cycle flagged")
+++
+++    table_rows = """
+++<tr><th>Asset</th><th>Before</th><th>After</th></tr>
+++"""
+++    for k in ["BTC", "ETH", "ALTS"]:
+++        b = before.get(k, 0.0)
+++        a = after.get(k, 0.0)
+++        table_rows += f"<tr><td>{k}</td><td>{b:.0%}</td><td>{a:.0%}</td></tr>\n"
+++
+++    actions = []
+++    for k in ["BTC", "ETH", "ALTS"]:
+++        diff = round((after.get(k, 0.0) - before.get(k, 0.0)) * 100)
+++        sign = "+" if diff >= 0 else ""
+++        actions.append(f"{sign}{diff}% {k}")
+++
+++    html = f"""
+++<html>
+++<body>
+++  <h2>{subject}</h2>
+++  <ul>
+++    {''.join(f'<li>{b}</li>' for b in bullets)}
+++  </ul>
+++  <table border="1" cellpadding="4" cellspacing="0">
+++    {table_rows}
+++  </table>
+++  <p><strong>Actions:</strong> {', '.join(actions)}</p>
+++</body>
+++</html>
+++"""
+++
+++    ts = int(now.timestamp())
+++    before_path = f"/tmp/elon_email_before_{ts}.png"
+++    after_path = f"/tmp/elon_email_after_{ts}.png"
+++    _make_pie(before, "Before", before_path)
+++    _make_pie(after, "After", after_path)
+++
+++    return subject, html, [before_path, after_path]
+++
+++
+++def send_email(
+++    subject: str,
+++    html_body: str,
+++    attachments: List[str],
+++    to_address: str,
+++    smtp_from: Optional[str] = None,
+++) -> None:
+++    """Send an HTML email with attachments using SMTP credentials from environment.
+++
+++    Required env vars: SMTP_HOST, SMTP_USER, SMTP_PASS, SMTP_FROM (unless smtp_from provided).
+++    Optional: SMTP_PORT (default 587).
+++    """
+++    smtp_host = os.getenv("SMTP_HOST")
+++    smtp_port = int(os.getenv("SMTP_PORT", "587"))
+++    smtp_user = os.getenv("SMTP_USER")
+++    smtp_pass = os.getenv("SMTP_PASS")
+++    smtp_from = smtp_from or os.getenv("SMTP_FROM")
+++
+++    if not smtp_host or not smtp_user or not smtp_pass or not smtp_from:
+++        raise RuntimeError("SMTP credentials are not fully configured in environment")
+++
+++    msg = EmailMessage()
+++    msg["Subject"] = subject
+++    msg["From"] = smtp_from
+++    msg["To"] = to_address
+++    msg.set_content("This is an HTML email. Please view in an HTML-capable client.")
+++    msg.add_alternative(html_body, subtype="html")
+++
+++    for path in attachments:
+++        with open(path, "rb") as f:
+++            data = f.read()
+++        msg.add_attachment(data, maintype="image", subtype="png", filename=Path(path).name)
+++
+++    with smtplib.SMTP(smtp_host, smtp_port, timeout=30) as s:
+++        s.starttls()
+++        s.login(smtp_user, smtp_pass)
+++        s.send_message(msg)
+++
+++
+++__all__ = ["compose_email", "send_email"]
++diff --git a/requirements.txt b/requirements.txt
++new file mode 100644
++index 0000000..cb44d5e
++--- /dev/null
+++++ b/requirements.txt
++@@ -0,0 +1,7 @@
+++requests
+++matplotlib
+++python-dotenv
+++sendgrid
+++pytest
+++ruff
+++black
++diff --git a/runner.sh b/runner.sh
++new file mode 100644
++index 0000000..66f818e
++--- /dev/null
+++++ b/runner.sh
++@@ -0,0 +1,4 @@
+++#!/bin/zsh
+++# Runner script for Elon Rotation Bot (cron)
+++cd "$(dirname "$0")"
+++python3.11 main.py
++diff --git a/sample.json b/sample.json
++new file mode 100644
++index 0000000..6d440f5
++--- /dev/null
+++++ b/sample.json
++@@ -0,0 +1,12 @@
+++{
+++  "generated_at": "2025-10-06T12:51:20.054042+00:00",
+++  "btc_dom": 55.0,
+++  "eth_dom": 18.0,
+++  "fear_greed": 40,
+++  "cbbi": 65,
+++  "trend_btc": "flat",
+++  "trend_eth": "up",
+++  "pi_cycle_flag": false,
+++  "gtrends_coinbase": 50,
+++  "btc_dom_delta_7d": 1.2
+++}
++\ No newline at end of file
++diff --git a/sample2.json b/sample2.json
++new file mode 100644
++index 0000000..d5bbf1f
++--- /dev/null
+++++ b/sample2.json
++@@ -0,0 +1,12 @@
+++{
+++  "generated_at": "2025-10-06T12:54:54.151893+00:00",
+++  "btc_dom": 55.0,
+++  "eth_dom": 18.0,
+++  "fear_greed": 40,
+++  "cbbi": 65,
+++  "trend_btc": "flat",
+++  "trend_eth": "up",
+++  "pi_cycle_flag": false,
+++  "gtrends_coinbase": 50,
+++  "btc_dom_delta_7d": 1.2
+++}
++\ No newline at end of file
++diff --git a/signals/gating.py b/signals/gating.py
++new file mode 100644
++index 0000000..2c7046d
++--- /dev/null
+++++ b/signals/gating.py
++@@ -0,0 +1,77 @@
+++"""Gating logic for whether to send an email update.
+++
+++Function should_send compares target weights to previously sent weights and
+++indicator state, applies major-flag rules and a debounce window.
+++"""
+++from __future__ import annotations
+++
+++from datetime import datetime, timedelta, timezone
+++from typing import Dict, Optional, Tuple
+++
+++
+++MAJOR_CROSS_THRESHOLDS = {
+++    "cbbi": (70, 90),
+++    "fear_greed": (35, 65),
+++    "btc_dom": (50, 55),
+++}
+++
+++
+++def _max_abs_diff(a: Dict[str, float], b: Dict[str, float]) -> float:
+++    keys = set(a) | set(b)
+++    return max(abs(a.get(k, 0.0) - b.get(k, 0.0)) for k in keys)
+++
+++
+++def _crossed(prev: Optional[float], cur: Optional[float], threshold: float) -> bool:
+++    if prev is None or cur is None:
+++        return False
+++    return (prev < threshold <= cur) or (prev >= threshold > cur)
+++
+++
+++def should_send(
+++    target: Dict[str, float],
+++    prev_weights: Optional[Dict[str, float]],
+++    indicators: Dict,
+++    prev_indicators: Optional[Dict],
+++    last_sent_at: Optional[datetime],
+++    now: datetime,
+++    force: bool = False,
+++) -> Tuple[bool, str]:
+++    """Decide whether to send an email update.
+++
+++    Returns (send: bool, reason: str)
+++    """
+++    # Force overrides everything
+++    if force:
+++        return True, "force"
+++
+++    # If no previous weights/timestamp, send initial
+++    if prev_weights is None or last_sent_at is None:
+++        return True, "initial"
+++
+++    # Debounce: require >= 2 hours since last_sent
+++    if now - last_sent_at < timedelta(hours=2):
+++        return False, "debounce"
+++
+++    # weight change threshold (10% absolute)
+++    maxdiff = _max_abs_diff(target, prev_weights)
+++    if maxdiff >= 0.10:
+++        return True, f"weight_change:{maxdiff:.2f}"
+++
+++    # Major flag toggles or threshold crossings
+++    # pi_cycle toggled
+++    prev_pi = bool(prev_indicators.get("pi_cycle_flag", False)) if prev_indicators else False
+++    cur_pi = bool(indicators.get("pi_cycle_flag", False))
+++    if prev_pi != cur_pi:
+++        return True, "pi_cycle_toggle"
+++
+++    # Check threshold crossings for cbbi, fear_greed, btc_dom
+++    if prev_indicators:
+++        for k, (low, high) in MAJOR_CROSS_THRESHOLDS.items():
+++            prev_v = prev_indicators.get(k)
+++            cur_v = indicators.get(k)
+++            # crossing low or high
+++            if _crossed(prev_v, cur_v, low) or _crossed(prev_v, cur_v, high):
+++                return True, f"cross_{k}"
+++
+++    # No signal
+++    return False, "no_signal"
++\ No newline at end of file
++diff --git a/state/last_sent.json b/state/last_sent.json
++new file mode 100644
++index 0000000..29f8437
++--- /dev/null
+++++ b/state/last_sent.json
++@@ -0,0 +1,19 @@
+++{
+++  "weights": {
+++    "BTC": 0.34,
+++    "ETH": 0.33,
+++    "ALTS": 0.33
+++  },
+++  "indicators": {
+++    "btc_dom": 55.0,
+++    "eth_dom": 18.0,
+++    "fear_greed": 40,
+++    "cbbi": 65,
+++    "trend_btc": "flat",
+++    "trend_eth": "up",
+++    "pi_cycle_flag": false,
+++    "gtrends_coinbase": 50,
+++    "btc_dom_delta_7d": 1.2
+++  },
+++  "sent_at": "2025-10-06T12:54:54.151893+00:00"
+++}
++\ No newline at end of file
++diff --git a/tests/test_allocator.py b/tests/test_allocator.py
++new file mode 100644
++index 0000000..e94aeff
++--- /dev/null
+++++ b/tests/test_allocator.py
++@@ -0,0 +1,33 @@
+++"""
+++Unit tests for allocator logic in Elon Rotation Bot.
+++"""
+++import pytest
+++from rotation.allocator import allocate
+++
+++def test_risk_off():
+++    indicators = {"btc_dom": 58, "fear_greed": 28}
+++    weights = allocate(indicators)
+++    assert weights["BTC"] >= 0.60
+++
+++def test_eth_rotation():
+++    indicators = {"trend_eth": "up", "btc_dom_delta_7d": -1.2}
+++    weights = allocate(indicators)
+++    assert weights["ETH"] >= 0.35
+++
+++def test_risk_on_alts():
+++    indicators = {"fear_greed": 72, "btc_dom": 48, "cbbi": 60}
+++    weights = allocate(indicators)
+++    assert weights["ALTS"] >= 0.45
+++
+++def test_top_risk():
+++    indicators = {"pi_cycle_flag": True, "cbbi": 91}
+++    weights = allocate(indicators)
+++    assert weights["ALTS"] <= 0.20
+++    assert weights["ETH"] <= 0.35
+++
+++def test_clamp_normalize():
+++    indicators = {"btc_dom": 40, "fear_greed": 80, "cbbi": 10}
+++    weights = allocate(indicators)
+++    assert sum(weights.values()) == pytest.approx(1.00, abs=0.01)
+++    for v in weights.values():
+++        assert 0.05 <= v <= 0.80
++diff --git a/tests/test_emailer.py b/tests/test_emailer.py
++new file mode 100644
++index 0000000..41ad06a
++--- /dev/null
+++++ b/tests/test_emailer.py
++@@ -0,0 +1,19 @@
+++"""Tests for notify/emailer.py compose function."""
+++from notify.emailer import compose_email
+++
+++
+++def test_compose_email_creates_attachments(tmp_path):
+++    before = {"BTC": 0.5, "ETH": 0.3, "ALTS": 0.2}
+++    after = {"BTC": 0.6, "ETH": 0.25, "ALTS": 0.15}
+++    indicators = {"btc_dom": 55, "fear_greed": 40, "cbbi": 68}
+++    subject, html, attachments = compose_email(before, after, indicators)
+++    assert "Elon Rotation Update" in subject
+++    assert "Actions:" in html
+++    # attachments should be two png paths
+++    assert len(attachments) == 2
+++    for p in attachments:
+++        assert p.endswith('.png')
+++        # file exists
+++        with open(p, 'rb') as fh:
+++            data = fh.read()
+++        assert len(data) > 0
++diff --git a/tests/test_gating.py b/tests/test_gating.py
++new file mode 100644
++index 0000000..d357500
++--- /dev/null
+++++ b/tests/test_gating.py
++@@ -0,0 +1,60 @@
+++"""
+++Unit tests for signal gating logic in Elon Rotation Bot.
+++"""
+++from __future__ import annotations
+++
+++from datetime import datetime, timedelta, timezone
+++
+++from signals.gating import should_send
+++
+++
+++def test_initial_send():
+++	now = datetime.now(timezone.utc)
+++	send, reason = should_send({"BTC": 0.6}, None, {}, None, None, now)
+++	assert send and reason == "initial"
+++
+++
+++def test_debounce():
+++	now = datetime.now(timezone.utc)
+++	last = now - timedelta(minutes=30)
+++	prev = {"BTC": 0.34, "ETH": 0.33, "ALTS": 0.33}
+++	send, reason = should_send(prev, prev, {}, {}, last, now)
+++	assert not send and reason == "debounce"
+++
+++
+++def test_force():
+++	now = datetime.now(timezone.utc)
+++	last = now - timedelta(days=1)
+++	prev = {"BTC": 0.34}
+++	send, reason = should_send(prev, prev, {}, {}, last, now, force=True)
+++	assert send and reason == "force"
+++
+++
+++def test_weight_change():
+++	now = datetime.now(timezone.utc)
+++	last = now - timedelta(days=1)
+++	prev = {"BTC": 0.20, "ETH": 0.4, "ALTS": 0.4}
+++	target = {"BTC": 0.35, "ETH": 0.33, "ALTS": 0.32}
+++	send, reason = should_send(target, prev, {}, {}, last, now)
+++	assert send and reason.startswith("weight_change")
+++
+++
+++def test_pi_cycle_toggle():
+++	now = datetime.now(timezone.utc)
+++	last = now - timedelta(days=1)
+++	prev = {"BTC": 0.34}
+++	prev_ind = {"pi_cycle_flag": False}
+++	cur_ind = {"pi_cycle_flag": True}
+++	send, reason = should_send(prev, prev, cur_ind, prev_ind, last, now)
+++	assert send and reason == "pi_cycle_toggle"
+++
+++
+++def test_threshold_crossing():
+++	now = datetime.now(timezone.utc)
+++	last = now - timedelta(days=1)
+++	prev = {"BTC": 0.34}
+++	prev_ind = {"cbbi": 69}
+++	cur_ind = {"cbbi": 71}
+++	send, reason = should_send(prev, prev, cur_ind, prev_ind, last, now)
+++	assert send and reason.startswith("cross_cbbi")
+++
+diff --git a/requirements.txt b/requirements.txt
+new file mode 100644
+index 0000000..cb44d5e
+--- /dev/null
++++ b/requirements.txt
+@@ -0,0 +1,7 @@
++requests
++matplotlib
++python-dotenv
++sendgrid
++pytest
++ruff
++black
+diff --git a/runner.sh b/runner.sh
+new file mode 100644
+index 0000000..66f818e
+--- /dev/null
++++ b/runner.sh
+@@ -0,0 +1,4 @@
++#!/bin/zsh
++# Runner script for Elon Rotation Bot (cron)
++cd "$(dirname "$0")"
++python3.11 main.py
+diff --git a/sample.json b/sample.json
+new file mode 100644
+index 0000000..6d440f5
+--- /dev/null
++++ b/sample.json
+@@ -0,0 +1,12 @@
++{
++  "generated_at": "2025-10-06T12:51:20.054042+00:00",
++  "btc_dom": 55.0,
++  "eth_dom": 18.0,
++  "fear_greed": 40,
++  "cbbi": 65,
++  "trend_btc": "flat",
++  "trend_eth": "up",
++  "pi_cycle_flag": false,
++  "gtrends_coinbase": 50,
++  "btc_dom_delta_7d": 1.2
++}
+\ No newline at end of file
+diff --git a/sample2.json b/sample2.json
+new file mode 100644
+index 0000000..d5bbf1f
+--- /dev/null
++++ b/sample2.json
+@@ -0,0 +1,12 @@
++{
++  "generated_at": "2025-10-06T12:54:54.151893+00:00",
++  "btc_dom": 55.0,
++  "eth_dom": 18.0,
++  "fear_greed": 40,
++  "cbbi": 65,
++  "trend_btc": "flat",
++  "trend_eth": "up",
++  "pi_cycle_flag": false,
++  "gtrends_coinbase": 50,
++  "btc_dom_delta_7d": 1.2
++}
+\ No newline at end of file
+diff --git a/signals/gating.py b/signals/gating.py
+new file mode 100644
+index 0000000..2c7046d
+--- /dev/null
++++ b/signals/gating.py
+@@ -0,0 +1,77 @@
++"""Gating logic for whether to send an email update.
++
++Function should_send compares target weights to previously sent weights and
++indicator state, applies major-flag rules and a debounce window.
++"""
++from __future__ import annotations
++
++from datetime import datetime, timedelta, timezone
++from typing import Dict, Optional, Tuple
++
++
++MAJOR_CROSS_THRESHOLDS = {
++    "cbbi": (70, 90),
++    "fear_greed": (35, 65),
++    "btc_dom": (50, 55),
++}
++
++
++def _max_abs_diff(a: Dict[str, float], b: Dict[str, float]) -> float:
++    keys = set(a) | set(b)
++    return max(abs(a.get(k, 0.0) - b.get(k, 0.0)) for k in keys)
++
++
++def _crossed(prev: Optional[float], cur: Optional[float], threshold: float) -> bool:
++    if prev is None or cur is None:
++        return False
++    return (prev < threshold <= cur) or (prev >= threshold > cur)
++
++
++def should_send(
++    target: Dict[str, float],
++    prev_weights: Optional[Dict[str, float]],
++    indicators: Dict,
++    prev_indicators: Optional[Dict],
++    last_sent_at: Optional[datetime],
++    now: datetime,
++    force: bool = False,
++) -> Tuple[bool, str]:
++    """Decide whether to send an email update.
++
++    Returns (send: bool, reason: str)
++    """
++    # Force overrides everything
++    if force:
++        return True, "force"
++
++    # If no previous weights/timestamp, send initial
++    if prev_weights is None or last_sent_at is None:
++        return True, "initial"
++
++    # Debounce: require >= 2 hours since last_sent
++    if now - last_sent_at < timedelta(hours=2):
++        return False, "debounce"
++
++    # weight change threshold (10% absolute)
++    maxdiff = _max_abs_diff(target, prev_weights)
++    if maxdiff >= 0.10:
++        return True, f"weight_change:{maxdiff:.2f}"
++
++    # Major flag toggles or threshold crossings
++    # pi_cycle toggled
++    prev_pi = bool(prev_indicators.get("pi_cycle_flag", False)) if prev_indicators else False
++    cur_pi = bool(indicators.get("pi_cycle_flag", False))
++    if prev_pi != cur_pi:
++        return True, "pi_cycle_toggle"
++
++    # Check threshold crossings for cbbi, fear_greed, btc_dom
++    if prev_indicators:
++        for k, (low, high) in MAJOR_CROSS_THRESHOLDS.items():
++            prev_v = prev_indicators.get(k)
++            cur_v = indicators.get(k)
++            # crossing low or high
++            if _crossed(prev_v, cur_v, low) or _crossed(prev_v, cur_v, high):
++                return True, f"cross_{k}"
++
++    # No signal
++    return False, "no_signal"
+\ No newline at end of file
+diff --git a/state/last_sent.json b/state/last_sent.json
+new file mode 100644
+index 0000000..29f8437
+--- /dev/null
++++ b/state/last_sent.json
+@@ -0,0 +1,19 @@
++{
++  "weights": {
++    "BTC": 0.34,
++    "ETH": 0.33,
++    "ALTS": 0.33
++  },
++  "indicators": {
++    "btc_dom": 55.0,
++    "eth_dom": 18.0,
++    "fear_greed": 40,
++    "cbbi": 65,
++    "trend_btc": "flat",
++    "trend_eth": "up",
++    "pi_cycle_flag": false,
++    "gtrends_coinbase": 50,
++    "btc_dom_delta_7d": 1.2
++  },
++  "sent_at": "2025-10-06T12:54:54.151893+00:00"
++}
+\ No newline at end of file
+diff --git a/tests/test_allocator.py b/tests/test_allocator.py
+new file mode 100644
+index 0000000..e94aeff
+--- /dev/null
++++ b/tests/test_allocator.py
+@@ -0,0 +1,33 @@
++"""
++Unit tests for allocator logic in Elon Rotation Bot.
++"""
++import pytest
++from rotation.allocator import allocate
++
++def test_risk_off():
++    indicators = {"btc_dom": 58, "fear_greed": 28}
++    weights = allocate(indicators)
++    assert weights["BTC"] >= 0.60
++
++def test_eth_rotation():
++    indicators = {"trend_eth": "up", "btc_dom_delta_7d": -1.2}
++    weights = allocate(indicators)
++    assert weights["ETH"] >= 0.35
++
++def test_risk_on_alts():
++    indicators = {"fear_greed": 72, "btc_dom": 48, "cbbi": 60}
++    weights = allocate(indicators)
++    assert weights["ALTS"] >= 0.45
++
++def test_top_risk():
++    indicators = {"pi_cycle_flag": True, "cbbi": 91}
++    weights = allocate(indicators)
++    assert weights["ALTS"] <= 0.20
++    assert weights["ETH"] <= 0.35
++
++def test_clamp_normalize():
++    indicators = {"btc_dom": 40, "fear_greed": 80, "cbbi": 10}
++    weights = allocate(indicators)
++    assert sum(weights.values()) == pytest.approx(1.00, abs=0.01)
++    for v in weights.values():
++        assert 0.05 <= v <= 0.80
+diff --git a/tests/test_emailer.py b/tests/test_emailer.py
+new file mode 100644
+index 0000000..41ad06a
+--- /dev/null
++++ b/tests/test_emailer.py
+@@ -0,0 +1,19 @@
++"""Tests for notify/emailer.py compose function."""
++from notify.emailer import compose_email
++
++
++def test_compose_email_creates_attachments(tmp_path):
++    before = {"BTC": 0.5, "ETH": 0.3, "ALTS": 0.2}
++    after = {"BTC": 0.6, "ETH": 0.25, "ALTS": 0.15}
++    indicators = {"btc_dom": 55, "fear_greed": 40, "cbbi": 68}
++    subject, html, attachments = compose_email(before, after, indicators)
++    assert "Elon Rotation Update" in subject
++    assert "Actions:" in html
++    # attachments should be two png paths
++    assert len(attachments) == 2
++    for p in attachments:
++        assert p.endswith('.png')
++        # file exists
++        with open(p, 'rb') as fh:
++            data = fh.read()
++        assert len(data) > 0
+diff --git a/tests/test_gating.py b/tests/test_gating.py
+new file mode 100644
+index 0000000..d357500
+--- /dev/null
++++ b/tests/test_gating.py
+@@ -0,0 +1,60 @@
++"""
++Unit tests for signal gating logic in Elon Rotation Bot.
++"""
++from __future__ import annotations
++
++from datetime import datetime, timedelta, timezone
++
++from signals.gating import should_send
++
++
++def test_initial_send():
++	now = datetime.now(timezone.utc)
++	send, reason = should_send({"BTC": 0.6}, None, {}, None, None, now)
++	assert send and reason == "initial"
++
++
++def test_debounce():
++	now = datetime.now(timezone.utc)
++	last = now - timedelta(minutes=30)
++	prev = {"BTC": 0.34, "ETH": 0.33, "ALTS": 0.33}
++	send, reason = should_send(prev, prev, {}, {}, last, now)
++	assert not send and reason == "debounce"
++
++
++def test_force():
++	now = datetime.now(timezone.utc)
++	last = now - timedelta(days=1)
++	prev = {"BTC": 0.34}
++	send, reason = should_send(prev, prev, {}, {}, last, now, force=True)
++	assert send and reason == "force"
++
++
++def test_weight_change():
++	now = datetime.now(timezone.utc)
++	last = now - timedelta(days=1)
++	prev = {"BTC": 0.20, "ETH": 0.4, "ALTS": 0.4}
++	target = {"BTC": 0.35, "ETH": 0.33, "ALTS": 0.32}
++	send, reason = should_send(target, prev, {}, {}, last, now)
++	assert send and reason.startswith("weight_change")
++
++
++def test_pi_cycle_toggle():
++	now = datetime.now(timezone.utc)
++	last = now - timedelta(days=1)
++	prev = {"BTC": 0.34}
++	prev_ind = {"pi_cycle_flag": False}
++	cur_ind = {"pi_cycle_flag": True}
++	send, reason = should_send(prev, prev, cur_ind, prev_ind, last, now)
++	assert send and reason == "pi_cycle_toggle"
++
++
++def test_threshold_crossing():
++	now = datetime.now(timezone.utc)
++	last = now - timedelta(days=1)
++	prev = {"BTC": 0.34}
++	prev_ind = {"cbbi": 69}
++	cur_ind = {"cbbi": 71}
++	send, reason = should_send(prev, prev, cur_ind, prev_ind, last, now)
++	assert send and reason.startswith("cross_cbbi")
++
+diff --git a/tree.txt b/tree.txt
+new file mode 100644
+index 0000000..f32d97f
+--- /dev/null
++++ b/tree.txt
+@@ -0,0 +1,26 @@
++total 144
++drwxr-xr-x  25 imac  staff    800 Oct  6 14:12 .
++drwx------@ 14 imac  staff    448 Oct  6 14:08 ..
++-rw-r--r--   1 imac  staff     58 Oct  5 20:52 .env.example
++drwxr-xr-x  12 imac  staff    384 Oct  6 14:12 .git
++drwxr-xr-x@  3 imac  staff     96 Oct  5 21:08 .github
++-rw-r--r--   1 imac  staff     41 Oct  5 20:52 .gitignore
++drwxr-xr-x   6 imac  staff    192 Oct  6 14:05 .pytest_cache
++drwxr-xr-x   7 imac  staff    224 Oct  5 21:33 .venv
++-rw-r--r--@  1 imac  staff     20 Oct  5 20:35 README.md
++-rw-r--r--@  1 imac  staff   7930 Oct  5 10:21 elon_mailer_sendgrid.py
++drwxr-xr-x@  5 imac  staff    160 Oct  5 21:33 indicators
++drwxr-xr-x@  3 imac  staff     96 Oct  6 13:54 logs
++-rw-r--r--@  1 imac  staff   5451 Oct  6 13:54 main.py
++drwxr-xr-x@  5 imac  staff    160 Oct  6 14:05 notify
++-rw-r--r--@  1 imac  staff  21220 Oct  6 14:12 pr-diff.patch
++-rw-r--r--   1 imac  staff     24 Oct  5 21:24 pytest.ini
++-rw-r--r--@  1 imac  staff     61 Oct  6 13:48 requirements.txt
++drwxr-xr-x@  5 imac  staff    160 Oct  5 21:33 rotation
++-rw-r--r--@  1 imac  staff     96 Oct  6 13:48 runner.sh
++-rw-r--r--@  1 imac  staff    251 Oct  6 13:51 sample.json
++-rw-r--r--@  1 imac  staff    251 Oct  6 13:54 sample2.json
++drwxr-xr-x@  4 imac  staff    128 Oct  6 13:53 signals
++drwxr-xr-x@  3 imac  staff     96 Oct  6 13:54 state
++drwxr-xr-x@  6 imac  staff    192 Oct  6 13:56 tests
++-rw-r--r--@  1 imac  staff      0 Oct  6 14:12 tree.txt

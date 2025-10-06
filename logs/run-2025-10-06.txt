@@ -1,0 +1,2 @@
+2025-10-06T12:51:22.044131+00:00 dry-run: saved_indicators=True charts=/tmp/elon_before_1759755080.png,/tmp/elon_after_1759755080.png
+2025-10-06T12:54:55.090049+00:00 dry-run: send=True reason=initial saved_indicators=True charts=/tmp/elon_before_1759755294.png,/tmp/elon_after_1759755294.png
