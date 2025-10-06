@@ -1,0 +1,14 @@
+***REMOVED***
+***REMOVED***
+
+***REMOVED***
+regex:SG\.[A-Za-z0-9_-]+==>SG.REDACTED
+
+***REMOVED***
+regex:***REMOVED***
+
+***REMOVED***
+regex:Authorization: Bearer [A-Za-z0-9_\-\.]+==>Authorization: Bearer REDACTED
+
+***REMOVED***
+regex:api_key["']?[:=]["']?[^\s"'&]+==>api_key=REDACTED
