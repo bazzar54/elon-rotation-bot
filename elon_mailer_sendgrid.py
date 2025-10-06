@@ -6,10 +6,10 @@ Setup (one-time):
 1) Create a free SendGrid account (single sender is fine).
 2) Verify your From email (e.g., barryaburnett@gmail.com) under "Sender Authentication" → "Single Sender".
 3) Create an API Key with "Mail Send" permission.
-4) Export env vars (e.g., in ~/.zprofile):
-   export ***REMOVED***
-   export ELON_FROM_EMAIL="barryaburnett@gmail.com"
-   export ELON_FROM_NAME="Elon Rotation Bot"
+4) Export env vars (e.g., in ~/.zprofile) — store real keys in your shell/private vault, do NOT commit them to git:
+    export ***REMOVED***
+    export ELON_FROM_EMAIL="barryaburnett@gmail.com"
+    export ELON_FROM_NAME="Elon Rotation Bot"
 
 Send a test (no change):
    python elon_mailer_sendgrid.py --action no_change --to barryaburnett@gmail.com
