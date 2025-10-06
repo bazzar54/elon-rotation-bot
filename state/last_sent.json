@@ -1,0 +1,19 @@
+{
+  "weights": {
+    "BTC": 0.34,
+    "ETH": 0.33,
+    "ALTS": 0.33
+  },
+  "indicators": {
+    "btc_dom": 55.0,
+    "eth_dom": 18.0,
+    "fear_greed": 40,
+    "cbbi": 65,
+    "trend_btc": "flat",
+    "trend_eth": "up",
+    "pi_cycle_flag": false,
+    "gtrends_coinbase": 50,
+    "btc_dom_delta_7d": 1.2
+  },
+  "sent_at": "2025-10-06T12:54:54.151893+00:00"
+}
