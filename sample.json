@@ -1,12 +1,12 @@
 {
-  "generated_at": "2025-10-06T12:51:20.054042+00:00",
-  "btc_dom": 55.0,
-  "eth_dom": 18.0,
-  "fear_greed": 40,
+  "generated_at": "2025-10-08T20:52:11.614554+00:00",
+  "btc_dom": 56.85,
+  "eth_dom": 12.6,
+  "fear_greed": 60,
   "cbbi": 65,
   "trend_btc": "flat",
   "trend_eth": "up",
   "pi_cycle_flag": false,
   "gtrends_coinbase": 50,
-  "btc_dom_delta_7d": 1.2
+  "btc_dom_delta_7d": 0.0
 }

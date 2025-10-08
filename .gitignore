@@ -8,3 +8,4 @@ __pycache__/
 logs/
 sample*.json
 /tmp/
+state/indicators_cache.json
