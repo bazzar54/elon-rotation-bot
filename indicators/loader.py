@@ -9,7 +9,8 @@ Sources used:
 The function is robust to network failures and returns reasonable
 fallback values plus an optional `source_errors` list with diagnostics.
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+import time
 import json
 import urllib.request
 import urllib.error
@@ -25,12 +26,22 @@ COINGECKO_MARKET_CHART = "https://api.coingecko.com/api/v3/coins/{id}/market_cha
 FNG_API = "https://api.alternative.me/fng/?limit=1"
 
 
-def _fetch_json(url: str, timeout: int = 10):
-    try:
-        with urllib.request.urlopen(url, timeout=timeout) as resp:
-            return json.loads(resp.read().decode("utf-8"))
-    except Exception as exc:
-        return {"_error": str(exc)}
+def _fetch_json(url: str, timeout: int = 10, retries: int = 2, backoff: float = 0.7):
+    """Fetch JSON with a tiny retry loop for transient failures.
+
+    Returns a dict on success or a dict with key "_error" on failure.
+    """
+    last_exc = None
+    for attempt in range(1, retries + 1):
+        try:
+            with urllib.request.urlopen(url, timeout=timeout) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except Exception as exc:
+            last_exc = exc
+            # short backoff before retrying
+            if attempt < retries:
+                time.sleep(backoff)
+    return {"_error": str(last_exc)}
 
 
 def _eth_trend_from_prices(prices: list) -> str:

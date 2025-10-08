@@ -1,8 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict
 
 def build_dynamic_template_data(before: Dict[str, float], after: Dict[str, float], indicators: Dict) -> Dict:
-    now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    # use timezone-aware UTC datetime to avoid deprecation and ambiguity
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     action = "no_change"
     tldr = "No change — hold current allocations."
     rows = []
