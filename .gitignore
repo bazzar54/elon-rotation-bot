@@ -3,3 +3,9 @@ __pycache__/
 *.pyc
 .venv/
 .DS_Store
+
+# ignore run outputs, temporary charts and sample indicator dumps
+logs/
+sample*.json
+/tmp/
+state/indicators_cache.json

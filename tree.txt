@@ -1,0 +1,26 @@
+total 144
+drwxr-xr-x  25 imac  staff    800 Oct  6 14:12 .
+drwx------@ 14 imac  staff    448 Oct  6 14:08 ..
+-rw-r--r--   1 imac  staff     58 Oct  5 20:52 .env.example
+drwxr-xr-x  12 imac  staff    384 Oct  6 14:12 .git
+drwxr-xr-x@  3 imac  staff     96 Oct  5 21:08 .github
+-rw-r--r--   1 imac  staff     41 Oct  5 20:52 .gitignore
+drwxr-xr-x   6 imac  staff    192 Oct  6 14:05 .pytest_cache
+drwxr-xr-x   7 imac  staff    224 Oct  5 21:33 .venv
+-rw-r--r--@  1 imac  staff     20 Oct  5 20:35 README.md
+-rw-r--r--@  1 imac  staff   7930 Oct  5 10:21 elon_mailer_sendgrid.py
+drwxr-xr-x@  5 imac  staff    160 Oct  5 21:33 indicators
+drwxr-xr-x@  3 imac  staff     96 Oct  6 13:54 logs
+-rw-r--r--@  1 imac  staff   5451 Oct  6 13:54 main.py
+drwxr-xr-x@  5 imac  staff    160 Oct  6 14:05 notify
+-rw-r--r--@  1 imac  staff  21220 Oct  6 14:12 pr-diff.patch
+-rw-r--r--   1 imac  staff     24 Oct  5 21:24 pytest.ini
+-rw-r--r--@  1 imac  staff     61 Oct  6 13:48 requirements.txt
+drwxr-xr-x@  5 imac  staff    160 Oct  5 21:33 rotation
+-rw-r--r--@  1 imac  staff     96 Oct  6 13:48 runner.sh
+-rw-r--r--@  1 imac  staff    251 Oct  6 13:51 sample.json
+-rw-r--r--@  1 imac  staff    251 Oct  6 13:54 sample2.json
+drwxr-xr-x@  4 imac  staff    128 Oct  6 13:53 signals
+drwxr-xr-x@  3 imac  staff     96 Oct  6 13:54 state
+drwxr-xr-x@  6 imac  staff    192 Oct  6 13:56 tests
+-rw-r--r--@  1 imac  staff      0 Oct  6 14:12 tree.txt
