@@ -6,10 +6,10 @@ Setup (one-time):
 1) Create a free SendGrid account (single sender is fine).
 2) Verify your From email (e.g., barryaburnett@gmail.com) under "Sender Authentication" → "Single Sender".
 3) Create an API Key with "Mail Send" permission.
-4) Export env vars (e.g., in ~/.zprofile):
-   export ***REMOVED***
-   export ELON_FROM_EMAIL="barryaburnett@gmail.com"
-   export ELON_FROM_NAME="Elon Rotation Bot"
+4) Export env vars (e.g., in ~/.zprofile) — store real keys in your shell/private vault, do NOT commit them to git:
+    export SENDGRID_API_KEY=
+    export ELON_FROM_EMAIL="barryaburnett@gmail.com"
+    export ELON_FROM_NAME="Elon Rotation Bot"
 
 Send a test (no change):
    python elon_mailer_sendgrid.py --action no_change --to barryaburnett@gmail.com
@@ -69,6 +69,45 @@ def send_via_sendgrid(subject, html_body, attachments, to_email, from_email, fro
     try:
         with urllib.request.urlopen(req, body) as resp:
             # 202 is success for SendGrid
+            if resp.status not in (200, 202):
+                raise SystemExit(f"SendGrid error: HTTP {resp.status}")
+    except urllib.error.HTTPError as e:
+        msg = e.read().decode("utf-8", errors="ignore")
+        raise SystemExit(f"SendGrid error {e.code}: {msg}")
+
+
+def send_via_template(template_id, dynamic_template_data, attachments, to_email, from_email, from_name, api_key):
+    """Send using a SendGrid dynamic template and optional attachments.
+    `dynamic_template_data` should be a dict matching your template placeholders.
+    Attachments are kept (PNG). Raises SystemExit on HTTP errors with the response text.
+    """
+    # Build attachments payload
+    atts = []
+    for path in attachments:
+        atts.append({
+            "content": b64_file(path),
+            "type": "image/png",
+            "filename": os.path.basename(path),
+            "disposition": "attachment"
+        })
+
+    data = {
+        "personalizations": [{
+            "to": [{"email": to_email}],
+            "dynamic_template_data": dynamic_template_data
+        }],
+        "from": {"email": from_email, "name": from_name},
+        "template_id": template_id,
+    }
+    if atts:
+        data["attachments"] = atts
+
+    req = urllib.request.Request(API_URL, method="POST")
+    req.add_header("Authorization", f"Bearer {api_key}")
+    req.add_header("Content-Type", "application/json")
+    body = json.dumps(data).encode("utf-8")
+    try:
+        with urllib.request.urlopen(req, body) as resp:
             if resp.status not in (200, 202):
                 raise SystemExit(f"SendGrid error: HTTP {resp.status}")
     except urllib.error.HTTPError as e:
@@ -186,7 +225,7 @@ def main():
         to_email=args.to,
         from_email=FROM_EMAIL,
         from_name=FROM_NAME,
-        api_key=REDACTED
+        api_key=API_KEY
     )
 
     print("Email sent via SendGrid.")

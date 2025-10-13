@@ -1,0 +1,7 @@
+requests
+matplotlib
+python-dotenv
+sendgrid
+pytest
+ruff
+black
