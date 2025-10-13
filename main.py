@@ -83,6 +83,7 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true", help="No email sent")
     parser.add_argument("--send", action="store_true", help="Actually send email if gating allows")
     parser.add_argument("--force", action="store_true", help="Bypass gating")
+    parser.add_argument("--use-cmc", action="store_true", help="Prefer CoinMarketCap for dominance if available")
     parser.add_argument("--save-indicators", type=str, help="Save indicators to path.json")
     parser.add_argument("--no-network", action="store_true", help="Use cache only; do not perform network fetches")
     parser.add_argument("--cache-ttl", type=int, default=120, help="Indicators cache TTL in seconds")
@@ -92,7 +93,7 @@ def main() -> None:
     print(f"SendGrid? {bool(os.getenv('SENDGRID_API_KEY'))}; SMTP? {all(os.getenv(k) for k in ['SMTP_HOST','SMTP_PORT','SMTP_USER','SMTP_PASS','SMTP_FROM'])}")
 
     now_utc = datetime.now(timezone.utc)
-    indicators = load_indicators(now_utc, no_network=args.no_network, cache_ttl=args.cache_ttl)
+    indicators = load_indicators(now_utc, prefer_cmc=args.use_cmc, no_network=args.no_network, cache_ttl=args.cache_ttl)
     target = allocate(indicators)
 
     # last sent (structured: {"weights":..., "indicators":..., "sent_at": iso})
@@ -129,15 +130,20 @@ def main() -> None:
 
     # Print concise summary
     london = now_utc.astimezone(ZoneInfo("Europe/London"))
-    title = f"Elon Rotation Update — {london.strftime('%Y-%m-%d %H:%M UK')}"
+    cmc_enabled = bool(os.getenv('CMC_API_KEY')) or args.use_cmc
+    title = f"Elon Rotation Update — {london.strftime('%Y-%m-%d %H:%M UK')} — CMC={cmc_enabled}"
     print(title)
     # short rationale bullets (simple derivation)
     rationale = []
     btc_dom = indicators.get("btc_dom")
+    eth_dom = indicators.get("eth_dom")
+    alts_dom = indicators.get("alts_dom")
     fg = indicators.get("fear_greed")
     cbbi = indicators.get("cbbi")
     if btc_dom is not None and fg is not None:
-        rationale.append(f"BTC.D {btc_dom}%; Fear&Greed at {fg}.")
+        rationale.append(f"BTC.D {btc_dom:.1f}%; Fear&Greed at {fg}.")
+    if eth_dom is not None and alts_dom is not None:
+        rationale.append(f"ETH.D {eth_dom:.1f}%; ALTs.D {alts_dom:.1f}%.")
     if indicators.get("pi_cycle_flag"):
         rationale.append("Pi-Cycle flag set.")
     if indicators.get("trend_eth"):
